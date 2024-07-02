@@ -1,18 +1,18 @@
 pipeline {
-    agent { label 'Jenkins-Agent' }
+    agent { label 'Jenkins-agent' }
     tools {
         jdk 'Java17'
         maven 'Maven3'
     }
-    environment {
+    """   environment {
 	    APP_NAME = "register-app-pipeline"
             RELEASE = "1.0.0"
-            DOCKER_USER = "ashfaque9x"
+            DOCKER_USER = "pavi56"
             DOCKER_PASS = 'dockerhub'
             IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
             IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 	    JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")
-    }
+    }"""
     stages{
         stage("Cleanup Workspace"){
                 steps {
@@ -22,7 +22,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/Ashfaque-9x/register-app'
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/pavi56/register-app'
                 }
         }
 
@@ -39,7 +39,7 @@ pipeline {
            }
        }
 
-       stage("SonarQube Analysis"){
+ """      stage("SonarQube Analysis"){
            steps {
 	           script {
 		        withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') { 
@@ -57,7 +57,8 @@ pipeline {
             }
 
         }
-
+"""
+"""
         stage("Build & Push Docker Image") {
             steps {
                 script {
@@ -73,7 +74,8 @@ pipeline {
             }
 
        }
-
+"""
+"""
        stage("Trivy Scan") {
            steps {
                script {
@@ -90,7 +92,8 @@ pipeline {
                }
           }
        }
-
+"""
+"""
        stage("Trigger CD Pipeline") {
             steps {
                 script {
@@ -99,7 +102,8 @@ pipeline {
             }
        }
     }
-
+"""
+"""
     post {
        failure {
              emailext body: '''${SCRIPT, template="groovy-html.template"}''', 
@@ -113,3 +117,4 @@ pipeline {
       }      
    }
 }
+"""
